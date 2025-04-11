@@ -1,9 +1,25 @@
 const express = require("express");
 const app = express();
+const cors = require("cors");
 const dotenv = require("dotenv");
 
 dotenv.config();
 const port = process.env.PORT || 4000;
+
+const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(",") || [];
+
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      } else {
+        return callback(new Error("CORS policy: Not allowed by CORS"));
+      }
+    },
+  })
+);
 
 app.get("/", (req, res) => {
   res.send("Hello World!");
@@ -46,7 +62,9 @@ app.get("/api/chat", (req, res) => {
 });
 
 app.get("/api/chat/:id", (req, res) => {
-  console.log(req.params.id);
+  // console.log(req.params);
+  const singlechat = chats.find((c) => c._id === req.params.id);
+  res.send(singlechat);
 });
 
 app.listen(port, () => {
