@@ -5,12 +5,14 @@ import Chatpage from "./Pages/Chatpage";
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route exact path="/" element={<Homepage />} />
-        <Route exact path="/chats" element={<Chatpage />} />
-      </Routes>
-    </BrowserRouter>
+    <div className="App">
+      <BrowserRouter>
+        <Routes>
+          <Route exact path="/" element={<Homepage />} />
+          <Route exact path="/chats" element={<Chatpage />} />
+        </Routes>
+      </BrowserRouter>
+    </div>
   );
 }
 
