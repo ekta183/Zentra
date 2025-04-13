@@ -3,6 +3,10 @@ const app = express();
 const cors = require("cors");
 const dotenv = require("dotenv");
 const connectDB = require("./config/db");
+const userRoutes = require("./routes/userRoutes");
+const { notFound, errorHandler } = require("./middleware/errorMiddleware");
+
+app.use(express.json());
 
 dotenv.config();
 const port = process.env.PORT || 4000;
@@ -24,50 +28,13 @@ app.use(
 );
 
 app.get("/", (req, res) => {
-  res.send("Hello World!");
+  res.send("API is working.");
 });
 
-const chats = [
-  {
-    isGroupChat: false,
-    users: [
-      {
-        name: "John Doe",
-        email: "john@example.com",
-      },
-      {
-        name: "Piyush",
-        email: "piyush@example.com",
-      },
-    ],
-    _id: "617a077e18c25468bc7c4dd4",
-    chatName: "John Doe",
-  },
-  {
-    isGroupChat: false,
-    users: [
-      {
-        name: "Guest User",
-        email: "guest@example.com",
-      },
-      {
-        name: "Piyush",
-        email: "piyush@example.com",
-      },
-    ],
-    _id: "617a077e18c25468b27c4dd4",
-    chatName: "Guest User",
-  },
-];
-app.get("/api/chat", (req, res) => {
-  res.send(chats);
-});
+app.use("/api/user", userRoutes);
 
-app.get("/api/chat/:id", (req, res) => {
-  // console.log(req.params);
-  const singlechat = chats.find((c) => c._id === req.params.id);
-  res.send(singlechat);
-});
+app.use(notFound);
+app.use(errorHandler);
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);

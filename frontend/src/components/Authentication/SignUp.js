@@ -1,19 +1,169 @@
 import { VStack, Button, Field, Fieldset, Input } from "@chakra-ui/react";
 import React from "react";
-import { useState } from "react";
 import { PasswordInput } from "../ui/password-input";
+import { ToastContainer, toast, Bounce } from "react-toastify";
+import axios from "axios";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+
+// import { toaster } from "../ui/toaster";
 
 const SignUp = () => {
-  const [name, setName] = useState();
-  const [email, setEmail] = useState();
-  const [confirmpassword, setConfirmpassword] = useState();
-  const [password, setPassword] = useState();
-  const [pic, setPic] = useState();
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [confirmpassword, setConfirmpassword] = useState("");
+  const [password, setPassword] = useState("");
+  const [pic, setPic] = useState("");
   const [picLoading, setPicLoading] = useState(false);
+  const navigate = useNavigate();
 
-  const submitHandler = () => {};
+  const submitHandler = async () => {
+    setPicLoading(true);
+    if (!name || !email || !password || !confirmpassword) {
+      toast.warn("Please Fill all the Feilds", {
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        transition: Bounce,
+      });
+      setPicLoading(false);
+      return;
+    }
+    if (password !== confirmpassword) {
+      toast.warn("Passwords Do Not Match", {
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        transition: Bounce,
+      });
+      return;
+    }
+    console.log(name, email, password, pic);
+    try {
+      const config = {
+        headers: {
+          "Content-type": "application/json",
+        },
+      };
+      const { data } = await axios.post(
+        "http://localhost:5000/api/user",
+        {
+          name,
+          email,
+          password,
+          pic,
+        },
+        config
+      );
+      console.log(data);
 
-  const postDetails = (pics) => {};
+      toast.success("Registration Successful", {
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
+      localStorage.setItem("userInfo", JSON.stringify(data));
+      setPicLoading(false);
+      navigate("/chats");
+    } catch (error) {
+      toast.error(`Error Occured! ${error.response.data.message}`, {
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        transition: Bounce,
+      });
+      setPicLoading(false);
+    }
+    console.log("Form submitted");
+  };
+
+  const postDetails = (pics) => {
+    console.log("Image selected", pics);
+    setPicLoading(true);
+    if (!pics) {
+      toast.error("Please Select an Image!", {
+        position: "bottom-right",
+        autoClose: 1000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
+      setPicLoading(false);
+      return;
+    }
+
+    if (pics.type === "image/jpeg" || pics.type === "image/png") {
+      const data = new FormData();
+      data.append("file", pics);
+      data.append("upload_preset", "zentra");
+      data.append("cloud_name", "dnda6acrj");
+
+      fetch("https://api.cloudinary.com/v1_1/dnda6acrj/image/upload", {
+        method: "POST",
+        body: data,
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          setPic(data.url.toString());
+          console.log("Photo uploaded");
+          toast.success("Photo uploaded", {
+            position: "bottom-right",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: false,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
+            transition: Bounce,
+          });
+          setPicLoading(false);
+          setPicLoading(false);
+        })
+        .catch((err) => {
+          console.error(err);
+          setPicLoading(false);
+        });
+    } else {
+      toast.error("Please Select a valid Image!", {
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
+      setPicLoading(false);
+    }
+  };
   return (
     <VStack>
       <Fieldset.Root size="lg" maxW="full">
@@ -69,11 +219,12 @@ const SignUp = () => {
           width="100%"
           style={{ marginTop: 15 }}
           onClick={submitHandler}
-          isLoading={picLoading}
+          loading={picLoading}
         >
           Sign Up
         </Button>
       </Fieldset.Root>
+      <ToastContainer />
     </VStack>
   );
 };
