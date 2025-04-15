@@ -16,6 +16,7 @@ const allUsers = asyncHandler(async (req, res) => {
   res.send(users);
 });
 
+// .find({ _id: { $ne: req.user._id } });
 const registerUser = asyncHandler(async (req, res) => {
   const { name, email, password, pic } = req.body;
 
