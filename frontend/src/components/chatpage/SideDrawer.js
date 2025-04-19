@@ -1,4 +1,11 @@
-import { Box, Button, Text,Drawer ,CloseButton,Input} from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Text,
+  Drawer,
+  CloseButton,
+  Input,
+} from "@chakra-ui/react";
 import React, { useState } from "react";
 import { Tooltip } from "../ui/tooltip";
 import { ToastContainer, toast, Bounce } from "react-toastify";
@@ -22,22 +29,24 @@ const SideDrawer = () => {
   const [loading, setLoading] = useState(false);
   const [loadingChat, setLoadingChat] = useState(false);
 
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  // const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
-  const { setSelectedChat,
+  const {
+    setSelectedChat,
     user,
     notification,
     setNotification,
     chats,
-    setChats, } = ChatState();
+    setChats,
+  } = ChatState();
   const navigate = useNavigate();
 
-  const logoutHandler = () =>{
+  const logoutHandler = () => {
     localStorage.removeItem("userInfo");
     navigate("/");
   };
 
-  const accessChat = async(userId) =>{
+  const accessChat = async (userId, store) => {
     console.log(userId);
 
     try {
@@ -48,12 +57,17 @@ const SideDrawer = () => {
           Authorization: `Bearer ${user.token}`,
         },
       };
-      const { data } = await axios.post(`http://localhost:5000/api/chat`, { userId }, config);
+      const { data } = await axios.post(
+        `http://localhost:5000/api/chat`,
+        { userId },
+        config
+      );
 
       if (!chats.find((c) => c._id === data._id)) setChats([data, ...chats]);
       setSelectedChat(data);
       setLoadingChat(false);
-      setIsDrawerOpen(false);
+      store.setOpen(false);
+      // setIsDrawerOpen(false);
     } catch (error) {
       toast.error(`Error fetching the chat! ${error.message}`, {
         position: "bottom-right",
@@ -68,9 +82,8 @@ const SideDrawer = () => {
       });
     }
   };
- 
 
-  const handleSearch = async() =>{
+  const handleSearch = async () => {
     if (!search) {
       toast.warn("Please Enter something in search", {
         position: "bottom-right",
@@ -95,7 +108,10 @@ const SideDrawer = () => {
         },
       };
 
-      const { data } = await axios.get(`http://localhost:5000/api/user?search=${search}`, config);
+      const { data } = await axios.get(
+        `http://localhost:5000/api/user?search=${search}`,
+        config
+      );
 
       setLoading(false);
       setSearchResult(data);
@@ -112,7 +128,7 @@ const SideDrawer = () => {
         transition: Bounce,
       });
     }
-  }
+  };
   return (
     <div>
       <Box
@@ -126,70 +142,78 @@ const SideDrawer = () => {
         borderColor="whiteAlpha.800"
         color="black"
       >
-        <Drawer.Root placement="start" bg="white" color="black" open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
+        <Drawer.Root placement="start" bg="white" color="black">
           <Tooltip
-          content="Search Users to Chat"
-          showArrow
-          positioning={{ placement: "right-end" }}
-        >
-
-        <Drawer.Trigger asChild>
-
-        
-          <Button
-            variant="ghost"
-            color="black"
-            _hover={{ bg: "gray.200", color: "black" }}
+            content="Search Users to Chat"
+            showArrow
+            positioning={{ placement: "right-end" }}
           >
-            <FontAwesomeIcon icon={faMagnifyingGlass} />
-            <Text display={{ base: "none", md: "flex" }} px="4">
-              Search User
-            </Text>
-          </Button>
-        
-        </Drawer.Trigger>
-        </Tooltip>
-      <Portal>
-        <Drawer.Backdrop />
-        <Drawer.Positioner>
-          <Drawer.Content  bg="white" color="black " >
-            <Drawer.Header borderBottomWidth="1px" borderColor="gray"> 
-              <Drawer.Title >Search Users</Drawer.Title>
-            </Drawer.Header>
-            <Drawer.Body>
-              <Box display="flex" pb={2} >
-                <Input
-                placeholder="Search by name or email"
-                mr={2}
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-              />
-              <Button colorPalette="teal" variant = "subtle" onClick={handleSearch}>Go</Button>
-              </Box>
-              {loading ? (
-              <ChatLoading />
-            ) : (
-              searchResult?.map((user) => (
-                <UserListItem
-                  key={user._id}
-                  user={user}
-                  handleFunction={() => accessChat(user._id)}
-                />
-              ))
-            )}
-            {loadingChat && <Spinner ml="auto" display="flex" />}  
-            </Drawer.Body>
-            {/* <Drawer.Footer>
+            <Drawer.Trigger asChild>
+              <Button
+                variant="ghost"
+                color="black"
+                _hover={{ bg: "gray.200", color: "black" }}
+              >
+                <FontAwesomeIcon icon={faMagnifyingGlass} />
+                <Text display={{ base: "none", md: "flex" }} px="4">
+                  Search User
+                </Text>
+              </Button>
+            </Drawer.Trigger>
+          </Tooltip>
+          <Portal>
+            <Drawer.Backdrop />
+            <Drawer.Positioner>
+              <Drawer.Content bg="white" color="black ">
+                <Drawer.Context>
+                  {(store) => (
+                    <>
+                      <Drawer.Header borderBottomWidth="1px" borderColor="gray">
+                        <Drawer.Title>Search Users</Drawer.Title>
+                      </Drawer.Header>
+                      <Drawer.Body>
+                        <Box display="flex" pb={2}>
+                          <Input
+                            placeholder="Search by name or email"
+                            mr={2}
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                          />
+                          <Button
+                            colorPalette="teal"
+                            variant="subtle"
+                            onClick={handleSearch}
+                          >
+                            Go
+                          </Button>
+                        </Box>
+                        {loading ? (
+                          <ChatLoading />
+                        ) : (
+                          searchResult?.map((user) => (
+                            <UserListItem
+                              key={user._id}
+                              user={user}
+                              handleFunction={() => accessChat(user._id, store)}
+                            />
+                          ))
+                        )}
+                        {loadingChat && <Spinner ml="auto" display="flex" />}
+                      </Drawer.Body>
+                      {/* <Drawer.Footer>
 
             </Drawer.Footer> */}
-            {/* <Drawer.CloseTrigger asChild>
+                      {/* <Drawer.CloseTrigger asChild>
               <CloseButton size="sm" _hover={{ bg: "gray.200", color: "black" }}
                 _active={{ bg: "gray.300", color: "black" }}/>
             </Drawer.CloseTrigger> */}
-          </Drawer.Content>
-        </Drawer.Positioner>
-      </Portal>
-    </Drawer.Root>
+                    </>
+                  )}
+                </Drawer.Context>
+              </Drawer.Content>
+            </Drawer.Positioner>
+          </Portal>
+        </Drawer.Root>
 
         <Text
           fontSize="  2xl"

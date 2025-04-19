@@ -1,8 +1,7 @@
-
-import { Avatar , Box,Text } from "@chakra-ui/react";
+import { Avatar, Box, Text } from "@chakra-ui/react";
 import { ChatState } from "../../Context/ChatProvider";
-const UserListItem = ({user,handleFunction }) => {
-//   const { user } = ChatState();
+const UserListItem = ({ user, handleFunction }) => {
+  //   const { user } = ChatState();
 
   return (
     <Box
@@ -14,7 +13,7 @@ const UserListItem = ({user,handleFunction }) => {
         color: "white",
       }}
       w="100%"
-      d="flex"
+      display="flex"
       alignItems="center"
       color="black"
       px={3}
@@ -22,11 +21,10 @@ const UserListItem = ({user,handleFunction }) => {
       mb={2}
       borderRadius="lg"
     >
-      
       <Avatar.Root shape="full" size="sm" cursor="pointer" mr={2}>
-                  <Avatar.Fallback name={user.name} />
-                  <Avatar.Image src={user.pic} />
-    </Avatar.Root>
+        <Avatar.Fallback name={user.name} />
+        <Avatar.Image src={user.pic} />
+      </Avatar.Root>
       <Box>
         <Text>{user.name}</Text>
         <Text fontSize="xs">
