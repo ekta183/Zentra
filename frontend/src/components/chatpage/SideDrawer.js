@@ -215,13 +215,11 @@ const SideDrawer = () => {
           </Portal>
         </Drawer.Root>
 
-        <Text
-          fontSize="  2xl"
-          // fontWeight="bold"
-          fontFamily="Work sans"
-          color="black"
-        >
-          Zentra - Smart Chat, Smarter Emotions
+        <Text fontSize="xl" fontFamily="Work sans" color="black">
+          Zentra{" "}
+          <Box as="span" display={{ base: "none", md: "inline" }}>
+            – Smart Chat, Smarter Emotions
+          </Box>
         </Text>
         <div>
           <Menu.Root variant="subtle" colorPalette="gray" closeOnSelect="true">

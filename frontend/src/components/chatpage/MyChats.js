@@ -8,7 +8,7 @@ import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { getSender } from "../../config/ChatLogics";
 import ChatLoading from "../ChatLoading";
 import GroupChatModal from "./GroupChatModal";
-const MyChats = () => {
+const MyChats = ({ fetchAgain }) => {
   const [loggedUser, setLoggedUser] = useState();
 
   const { selectedChat, setSelectedChat, user, chats, setChats } = ChatState();
@@ -46,7 +46,7 @@ const MyChats = () => {
   useEffect(() => {
     setLoggedUser(JSON.parse(localStorage.getItem("userInfo")));
     fetchChats();
-  }, []);
+  }, [fetchAgain]);
 
   return (
     <>
@@ -80,13 +80,19 @@ const MyChats = () => {
             <Button
               display="flex"
               fontSize={{ base: "18px", md: "10px", lg: "18px" }}
+              fontFamily="Work sans"
               variant="subtle"
               color="black"
               bg="gray.200"
               _hover={{ bg: "gray", color: "black" }}
               size="sm"
             >
-              <Box display={{ base: "none", sm: "inline" }}>New Group Chat</Box>
+              <Box
+                display={{ base: "none", sm: "inline" }}
+                fontFamily="Work sans"
+              >
+                New Group Chat
+              </Box>
               <FontAwesomeIcon icon={faPlus} />
             </Button>
           </GroupChatModal>
