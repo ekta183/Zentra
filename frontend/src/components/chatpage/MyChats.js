@@ -74,7 +74,13 @@ const MyChats = ({ fetchAgain }) => {
           alignItems="center"
         >
           <Box fontSize={{ base: "20px", md: "23px" }} fontFamily="Work sans">
-            My Chats
+            <Box
+              as="span"
+              display={{ base: "inline", md: "none", lg: "inline" }}
+            >
+              My{" "}
+            </Box>
+            Chats
           </Box>
           <GroupChatModal>
             <Button
