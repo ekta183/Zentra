@@ -1,13 +1,16 @@
 import React, { useState } from "react";
 import { Toaster, toaster } from "../ui/toaster";
 import { ChatState } from "../../Context/ChatProvider";
-import { Box, Text } from "@chakra-ui/react";
+import { Box, Field, Input, Spinner, Text } from "@chakra-ui/react";
 import { IoMdArrowBack } from "react-icons/io";
 import { IconButton } from "@chakra-ui/react";
 import ProfileModal from "./ProfileModal";
 import { getSender } from "../../config/ChatLogics";
 import { getSenderFull } from "../../config/ChatLogics";
 import UpdateGroupChatModal from "./UpdateGroupChatModal";
+import axios from "axios";
+import { useEffect } from "react";
+import ScrollableChat from "./ScrollableChat";
 
 const SingleChat = ({ fetchAgain, setFetchAgain }) => {
   const [messages, setMessages] = useState([]);
@@ -19,8 +22,101 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
 
   const { selectedChat, setSelectedChat, user, notification, setNotification } =
     ChatState();
+  const sendMessage = async (event) => {
+    if (event.key === "Enter" && newMessage) {
+      // socket.emit("stop typing", selectedChat._id);
+      try {
+        const config = {
+          headers: {
+            "Content-type": "application/json",
+            Authorization: `Bearer ${user.token}`,
+          },
+        };
+        setNewMessage("");
+        const { data } = await axios.post(
+          "http://localhost:5000/api/message",
+          {
+            content: newMessage,
+            chatId: selectedChat,
+          },
+          config
+        );
+        console.log(data);
+        // socket.emit("new message", data);
 
-  const fetchMessages = () => {};
+        setMessages([...messages, data]);
+      } catch (error) {
+        toaster.create({
+          title: "Error Occured!",
+          description: "Failed to send the Message",
+          type: "error",
+          duration: 5000,
+          meta: {
+            closable: true,
+          },
+        });
+      }
+    }
+  };
+
+  const typingHandler = (e) => {
+    setNewMessage(e.target.value);
+
+    //  if (!socketConnected) return;
+
+    //  if (!typing) {
+    //    setTyping(true);
+    //    socket.emit("typing", selectedChat._id);
+    //  }
+    //  let lastTypingTime = new Date().getTime();
+    //  var timerLength = 3000;
+    //  setTimeout(() => {
+    //    var timeNow = new Date().getTime();
+    //    var timeDiff = timeNow - lastTypingTime;
+    //    if (timeDiff >= timerLength && typing) {
+    //      socket.emit("stop typing", selectedChat._id);
+    //      setTyping(false);
+    //    }
+    //  }, timerLength);
+  };
+
+  const fetchMessages = async () => {
+    if (!selectedChat) return;
+
+    try {
+      const config = {
+        headers: {
+          Authorization: `Bearer ${user.token}`,
+        },
+      };
+
+      setLoading(true);
+
+      const { data } = await axios.get(
+        `http://localhost:5000/api/message/${selectedChat._id}`,
+        config
+      );
+
+      setMessages(data);
+      setLoading(false);
+
+      // socket.emit("join chat", selectedChat._id);
+    } catch (error) {
+      toaster.create({
+        title: "Error Occured!",
+        description: "Failed to Load the Messages",
+        type: "error",
+        duration: 5000,
+        meta: {
+          closable: true,
+        },
+      });
+    }
+  };
+
+  useEffect(() => {
+    fetchMessages();
+  }, [selectedChat]);
 
   return (
     <>
@@ -76,7 +172,31 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
             h="100%"
             borderRadius="lg"
             overflowY="hidden"
-          ></Box>
+          >
+            {loading ? (
+              <Spinner
+                size="xl"
+                w={20}
+                h={20}
+                alignSelf="center"
+                margin="auto"
+              />
+            ) : (
+              <div className="messages">
+                <ScrollableChat messages={messages} />
+              </div>
+            )}
+
+            <Field.Root onKeyDown={sendMessage} required mt={3}>
+              <Input
+                placeholder="Enter a message.."
+                variant="filled"
+                bg="#E0E0E0"
+                onChange={typingHandler}
+                value={newMessage}
+              />
+            </Field.Root>
+          </Box>
         </>
       ) : (
         <Box
