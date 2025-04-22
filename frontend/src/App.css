@@ -1,5 +1,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,100..900;1,100..900&display=swap');
-
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
 .App{
   min-height: 100vh;
   display: flex;

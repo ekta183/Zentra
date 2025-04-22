@@ -169,9 +169,9 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
             p={3}
             bg="#E8E8E8"
             w="100%"
-            h="100%"
+            height="100%"
             borderRadius="lg"
-            overflowY="hidden"
+            overflowY="auto"
           >
             {loading ? (
               <Spinner
@@ -182,9 +182,9 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                 margin="auto"
               />
             ) : (
-              <div className="messages">
+              <Box className="messages" flex="1" overflowY="hidden">
                 <ScrollableChat messages={messages} />
-              </div>
+              </Box>
             )}
 
             <Field.Root onKeyDown={sendMessage} required mt={3}>
