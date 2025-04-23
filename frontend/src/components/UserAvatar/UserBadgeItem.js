@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Badge } from "@chakra-ui/react";
+import { Badge } from "@chakra-ui/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
 

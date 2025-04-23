@@ -1,11 +1,4 @@
-import {
-  Box,
-  Button,
-  Text,
-  Drawer,
-  CloseButton,
-  Input,
-} from "@chakra-ui/react";
+import { Box, Button, Text, Drawer, Input } from "@chakra-ui/react";
 import React, { useState } from "react";
 import { Tooltip } from "../ui/tooltip";
 import { ToastContainer, toast, Bounce } from "react-toastify";
@@ -22,7 +15,8 @@ import { useNavigate } from "react-router";
 import axios from "axios";
 import ChatLoading from "../ChatLoading";
 import UserListItem from "../UserAvatar/UserListItem";
-import { Spinner } from "@chakra-ui/react";
+import { Spinner, Badge } from "@chakra-ui/react";
+import { getSender } from "../../config/ChatLogics";
 const SideDrawer = () => {
   const [search, setSearch] = useState("");
   const [searchResult, setSearchResult] = useState([]);
@@ -224,26 +218,66 @@ const SideDrawer = () => {
         <div>
           <Menu.Root variant="subtle" colorPalette="gray" closeOnSelect="true">
             <Menu.Trigger asChild>
-              <Button
-                variant="ghost"
-                color="black"
-                bg="transparent"
-                _hover={{ bg: "gray.200", color: "black" }}
-                _active={{ bg: "gray.300", color: "black" }}
-                _focus={{ bg: "transparent", color: "black" }}
-                isFocusable={false}
-                size="sm"
-              >
-                <FontAwesomeIcon icon={faBell} />
-              </Button>
+              <Box position="relative" display="inline-block">
+                {/* Bell Icon */}
+                <FontAwesomeIcon
+                  icon={faBell}
+                  size="xl" // Set the icon size
+                  style={{ color: "black" }} // You can customize the icon's style here
+                />
+
+                {/* Badge for Notifications */}
+                {notification.length > 0 && (
+                  <Badge
+                    position="absolute"
+                    top="-5px"
+                    right="-5px"
+                    borderRadius="full"
+                    // colorPalette="green"
+                    backgroundColor="red"
+                    fontSize="sm"
+                    size="sm"
+                    px={2}
+                  >
+                    {notification.length}
+                  </Badge>
+                )}
+              </Box>
             </Menu.Trigger>
-            {/* <Portal> */}
-            {/* <Menu.Positioner>
-              <Menu.Content>
-                <Menu.Item value="new-txt">New Text File</Menu.Item>
-              </Menu.Content>
-            </Menu.Positioner> */}
-            {/* </Portal> */}
+            <Portal>
+              <Menu.Positioner>
+                <Menu.Content
+                  bg="white"
+                  color="black"
+                  borderRadius="md"
+                  boxShadow="md"
+                  borderColor="black"
+                  borderWidth="1px"
+                >
+                  {!notification.length && "No New Messages"}
+                  {notification.map((notif) => (
+                    <Menu.Item
+                      color="black"
+                      _hover={{ bg: "gray.300" }}
+                      key={notif._id}
+                      onClick={() => {
+                        setSelectedChat(notif.chat);
+                        setNotification(
+                          notification.filter((n) => n !== notif)
+                        );
+                      }}
+                    >
+                      {notif.chat.isGroupChat
+                        ? `New Message in ${notif.chat.chatName}`
+                        : `New Message from ${getSender(
+                            user,
+                            notif.chat.users
+                          )}`}
+                    </Menu.Item>
+                  ))}
+                </Menu.Content>
+              </Menu.Positioner>
+            </Portal>
           </Menu.Root>
           <Menu.Root closeOnSelect="true">
             <Menu.Trigger asChild>

@@ -27,6 +27,8 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
   const { selectedChat, setSelectedChat, user, notification, setNotification } =
     ChatState();
 
+  const messageEndRef = useRef(null);
+
   useEffect(() => {
     socket = io(ENDPOINT);
     socket.emit("setup", user);
@@ -34,6 +36,16 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
     socket.on("typing", () => setIsTyping(true));
     socket.on("stop typing", () => setIsTyping(false));
   }, []);
+
+  useEffect(() => {
+    if (istyping && messageEndRef.current) {
+      messageEndRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "end",
+      });
+    }
+  }, [istyping]);
+
   const sendMessage = async (event) => {
     if (event.key === "Enter" && newMessage) {
       socket.emit("stop typing", selectedChat._id);
@@ -208,6 +220,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
               flexDirection="column"
               flex="1"
               overflowY="auto"
+              ref={messageEndRef}
             >
               {loading ? (
                 <Box
@@ -220,12 +233,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                 </Box>
               ) : (
                 <>
-                  <ScrollableChat messages={messages} />
-                  {istyping && (
-                    <Text fontSize="sm" color="gray.500" px={2} py={1}>
-                      Typing...
-                    </Text>
-                  )}
+                  <ScrollableChat messages={messages} istyping={istyping} />
                 </>
               )}
             </Box>

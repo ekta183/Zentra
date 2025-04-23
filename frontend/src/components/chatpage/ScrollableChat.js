@@ -9,15 +9,26 @@ import {
 } from "../../config/ChatLogics";
 import { Tooltip } from "../ui/tooltip";
 import { useId } from "react";
+import Lottie from "react-lottie";
+import animationData from "../../animations/typing.json";
 
-const ScrollableChat = ({ messages }) => {
+const ScrollableChat = ({ messages, istyping }) => {
   const { user } = ChatState();
   const tooltipId = useId();
   const bottomRef = useRef(null);
 
+  const defaultOptions = {
+    loop: true,
+    autoplay: true,
+    animationData: animationData,
+    rendererSettings: {
+      preserveAspectRatio: "xMidYMid slice",
+    },
+  };
+
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+  }, [messages, istyping]);
 
   return (
     <Box display="flex" flexDir="column" h="100%" overflowY="auto" px={4}>
@@ -60,7 +71,29 @@ const ScrollableChat = ({ messages }) => {
               </span>
             </Box>
           ))}
-        {/* This invisible box keeps scroll at the bottom */}
+
+        {istyping && (
+          <Box
+            display="flex"
+            alignItems="center"
+            mt={2}
+            ml={2}
+            backgroundColor="#B9F5D0"
+            borderRadius="20px"
+            // maxWidth="75%"
+            width={70}
+            // height={50}
+            // width={70}
+            // style={{ marginBottom: 15, marginLeft: 0 }}
+          >
+            <Lottie
+              options={defaultOptions}
+              height={33}
+              // width={70}
+              // style={{ marginBottom: 15, marginLeft: 0 }}
+            />
+          </Box>
+        )}
         <div ref={bottomRef} />
       </Box>
     </Box>
