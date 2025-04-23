@@ -4,7 +4,7 @@
   "description": "Here, You can chat and see translation and sentiment analysis.",
   "main": "server.js",
   "scripts": {
-    "start": "nodemon backend1/server.js"
+    "start": "node server.js"
   },
   "author": "Ekta Jangir",
   "license": "ISC",
