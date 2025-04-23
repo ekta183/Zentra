@@ -8,15 +8,15 @@ import { BrowserRouter } from "react-router-dom"; // 🧠 Add this line
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
-  <React.StrictMode>
-    <BrowserRouter>
-      {" "}
-      {/* 🧠 Wrap everything inside this */}
-      <Provider>
-        <ChatProvider>
-          <App />
-        </ChatProvider>
-      </Provider>
-    </BrowserRouter>
-  </React.StrictMode>
+  // <React.StrictMode>
+  <BrowserRouter>
+    {" "}
+    {/* 🧠 Wrap everything inside this */}
+    <Provider>
+      <ChatProvider>
+        <App />
+      </ChatProvider>
+    </Provider>
+  </BrowserRouter>
+  // </React.StrictMode>
 );

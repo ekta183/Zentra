@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import ScrollableFeed from "react-scrollable-feed";
+import { Box, Avatar } from "@chakra-ui/react";
 import { ChatState } from "../../Context/ChatProvider";
 import {
   isSameSender,
@@ -7,37 +7,24 @@ import {
   isLastMessage,
   isSameSenderMargin,
 } from "../../config/ChatLogics";
-import { Avatar, Box } from "@chakra-ui/react";
 import { Tooltip } from "../ui/tooltip";
 import { useId } from "react";
 
 const ScrollableChat = ({ messages }) => {
   const { user } = ChatState();
   const tooltipId = useId();
-  const lastMessageRef = useRef(null);
+  const bottomRef = useRef(null);
 
   useEffect(() => {
-    setTimeout(() => {
-      lastMessageRef.current?.scrollIntoView({ behavior: "smooth" });
-    }, 100);
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
+
   return (
-    <Box
-      px={4}
-      display="flex"
-      flexDirection="column"
-      overflowY="auto"
-      h="100%"
-      flex="1"
-    >
-      <div>
+    <Box display="flex" flexDir="column" h="100%" overflowY="auto" px={4}>
+      <Box display="flex" flexDir="column" mt="auto">
         {messages &&
           messages.map((m, i) => (
-            <div
-              style={{ display: "flex" }}
-              key={m._id}
-              ref={i === messages.length - 1 ? lastMessageRef : null}
-            >
+            <Box display="flex" key={m._id}>
               {(isSameSender(messages, m, i, user._id) ||
                 isLastMessage(messages, i, user._id)) && (
                 <Tooltip
@@ -60,9 +47,8 @@ const ScrollableChat = ({ messages }) => {
               )}
               <span
                 style={{
-                  backgroundColor: `${
-                    m.sender._id === user._id ? "#BEE3F8" : "#B9F5D0"
-                  }`,
+                  backgroundColor:
+                    m.sender._id === user._id ? "#BEE3F8" : "#B9F5D0",
                   marginLeft: isSameSenderMargin(messages, m, i, user._id),
                   marginTop: isSameUser(messages, m, i, user._id) ? 3 : 10,
                   borderRadius: "20px",
@@ -72,9 +58,11 @@ const ScrollableChat = ({ messages }) => {
               >
                 {m.content}
               </span>
-            </div>
+            </Box>
           ))}
-      </div>
+        {/* This invisible box keeps scroll at the bottom */}
+        <div ref={bottomRef} />
+      </Box>
     </Box>
   );
 };
