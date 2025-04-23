@@ -56,7 +56,7 @@ const SignUp = () => {
         },
       };
       const { data } = await axios.post(
-        "http://localhost:5000/api/user",
+        "https://zentra-backend-i9va.onrender.com/api/user",
         {
           name,
           email,

@@ -23,7 +23,7 @@ const MyChats = ({ fetchAgain }) => {
       };
 
       const { data } = await axios.get(
-        "http://localhost:5000/api/chat",
+        "https://zentra-backend-i9va.onrender.com/api/chat",
         config
       );
       // console.log(data);
