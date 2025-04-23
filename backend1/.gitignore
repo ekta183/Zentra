@@ -1,0 +1,61 @@
+# Node modules
+**/node_modules/
+**/.npm/
+**/dist/
+**/build/
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Vite cache
+.vite/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# dotenv environment files
+.env
+.env.*
+
+# Python
+*.pyc
+__pycache__/
+*.pyo
+*.pyd
+*.env
+
+# FastAPI specific
+instance/
+*.sqlite3
+
+# Virtual env
+venv/
+env/
+ENV/
+.venv/
+.python-version
+
+# VS Code
+.vscode/
+
+# Testing and coverage
+.coverage
+.tox/
+.cache/
+pytest_cache/
+
+# TypeScript
+*.tsbuildinfo
+
+# Sockets or queues
+*.sock
+mq_data/
+
+# IDEs
+.idea/
+*.sublime-workspace
+*.sublime-project
+*.code-workspace
