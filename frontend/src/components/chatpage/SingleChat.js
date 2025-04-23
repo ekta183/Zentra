@@ -30,7 +30,10 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
   const messageEndRef = useRef(null);
 
   useEffect(() => {
-    socket = io(ENDPOINT);
+    socket = io(ENDPOINT, {
+      transports: ["websocket"], // ensures WebSocket transport
+      autoConnect: true, // reconnects automatically if the connection drops
+    });
     socket.emit("setup", user);
     socket.on("connected", () => setSocketConnected(true));
     socket.on("typing", () => setIsTyping(true));
@@ -65,7 +68,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
           },
           config
         );
-        console.log(data);
+        // console.log(data);
         socket.emit("new message", data);
 
         setMessages([...messages, data]);
@@ -163,7 +166,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
     <>
       {selectedChat ? (
         <>
-          <Text
+          <Box
             fontSize={{ base: "25px", md: "28px" }}
             pb={3}
             px={2}
@@ -202,7 +205,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                   />
                 </>
               ))}
-          </Text>
+          </Box>
           <Box
             display="flex"
             flexDir="column"
