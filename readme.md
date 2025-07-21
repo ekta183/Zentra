@@ -2,7 +2,7 @@
 
 [![Render Live](https://img.shields.io/badge/Live-Zentra-brightgreen?style=flat-square&logo=render)](https://zentra-wb93.onrender.com)
 [![Backend](https://img.shields.io/badge/Backend-Render-blue?style=flat-square)](https://zentra-backend-i9va.onrender.com)
-[![License](https://img.shields.io/badge/license-ISC-yellow.svg?style=flat-square)](./LICENSE)
+
 
 Zentra is a real-time full-stack MERN chat application that allows users to engage in secure, interactive conversations with live **language translation** and **sentiment analysis**. Built with `Socket.IO`, it supports individual and group chats, typing indicators, and much more.
 
